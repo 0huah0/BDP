@@ -57,7 +57,9 @@ def isExists(uk):
 
 
 def fetch_data(url,start):
-    d=urllib.request.urlopen(url+"&start="+str(start)).read()
+    url=url+"&start="+str(start)
+    print("fetching...:"+url);
+    d=urllib.request.urlopen(url).read()
     d=str(d.decode('UTF-8'))
     return json.loads(d) #反序列化
 
@@ -66,7 +68,7 @@ def crawl_update_user(uk):
     d=fetch_data("http://yun.baidu.com/pcloud/user/getinfo?query_uk="+uk,0)
     d=d['user_info']
     
-    db_exec("delete from user_info where uk='"+uk+"'",None) #delete exist
+    #db_exec("delete from user_info where uk='"+uk+"'",None) #delete exist
     
     sql="insert into user_info(avatar_url,fans_count,follow_count,album_count,intro,uname,"
     sql+="uk,pubshare_count,tui_user_count,c2c_user_sell_count,c2c_user_buy_count,c2c_user_product_count,pair_follow_type)values"

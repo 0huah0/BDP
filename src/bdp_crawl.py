@@ -60,23 +60,31 @@ def fetch_data(url,start):
     url=url+"&start="+str(start)
     print("fetching...:"+url);
     
-    socket.setdefaulttimeout(60)
-    req = urllib.request.Request(url)
-    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1")
-    req.add_header("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-    req.add_header("Accept-Charset","utf-8")
+    d=None
+    try:
+        socket.setdefaulttimeout(5)
+        req = urllib.request.Request(url)
+        req.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1")
+        req.add_header("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+        req.add_header("Accept-Charset","utf-8")
+        
+        result = urllib.parse.urlparse(url)
+        params = urllib.parse.parse_qs(result.query,True)
+        
+        if result.path=="/pcloud/feed/getsharelist":    #如果是share则添加req.add_header("Referer",解决start超过500返回errorno=2
+            #print(params['query_uk'][0])
+            req.add_header("Referer","http://yun.baidu.com/share/home?uk="+params['query_uk'][0]+"&view=share")
+        
+        d=urllib.request.urlopen(req).read()
+        d=str(d.decode('UTF-8'))
+        d=json.loads(d)
+    except urllib.request.HTTPError as err:
+        print("Failed.fetching:")
+        print(err)
+    except BaseException as err:
+        print(err)
     
-    result = urllib.parse.urlparse(url)
-    params = urllib.parse.parse_qs(result.query,True)
-    
-    if result.path=="/pcloud/feed/getsharelist":    #如果是share则添加req.add_header("Referer",解决start超过500返回errorno=2
-        #print(params['query_uk'][0])
-        req.add_header("Referer","http://yun.baidu.com/share/home?uk="+params['query_uk'][0]+"&view=share")
-    
-    d=urllib.request.urlopen(req).read()
-    d=str(d.decode('UTF-8'))
-    
-    return json.loads(d) #反序列化
+    return d #反序列化
 
 #crawl_update_user
 def crawl_update_user(uk):
@@ -93,10 +101,10 @@ def crawl_update_user(uk):
 
 
 def crawl_save_share(uk):
-    max_limit="100"
+    max_limit=100
     start=2000
     
-    url="http://yun.baidu.com/pcloud/feed/getsharelist?auth_type=1&limit="+max_limit+"&query_uk="+uk
+    url="http://yun.baidu.com/pcloud/feed/getsharelist?auth_type=1&limit="+str(max_limit)+"&query_uk="+uk
     d=fetch_data(url,start)
     
     if d.get('errno',-1)!=0:
@@ -143,7 +151,7 @@ def crawl_save_share(uk):
 #crawl_save_follow
 def crawl_save_follow(uk):
     max_limit=25
-    url="http://yun.baidu.com/pcloud/friend/getfollowlist?limit="+max_limit+"&query_uk="+uk
+    url="http://yun.baidu.com/pcloud/friend/getfollowlist?limit="+str(max_limit)+"&query_uk="+uk
     d=fetch_data(url,0)
     tc=d['total_count']
     start=0
@@ -167,7 +175,7 @@ def crawl_save_follow(uk):
 #crawl_save_fans
 def crawl_save_fans(uk):
     max_limit=25
-    url="http://yun.baidu.com/pcloud/friend/getfanslist?limit="+max_limit+"&query_uk="+uk
+    url="http://yun.baidu.com/pcloud/friend/getfanslist?limit="+str(max_limit)+"&query_uk="+uk
     d=fetch_data(url,0)
     tc=d['total_count']
     start=0
@@ -208,12 +216,12 @@ def do_crawl(uk):
     if isExists(uk):
         print("skip exits uk:"+uk)
     else:
-        #crawl_update_user(uk)
+        crawl_update_user(uk)
         crawl_save_share(uk)
-        #crawl_save_follow(uk)
-        #crawl_save_fans(uk)
-#         loop_follow(uk)
-        #loop_fans(uk)
+        crawl_save_follow(uk)
+        crawl_save_fans(uk)
+        loop_follow(uk)
+        loop_fans(uk)
         
         
         

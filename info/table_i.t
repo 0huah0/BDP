@@ -3,3 +3,14 @@ insert into share(uk,shareid,feed_type,category,public,data_id,title,third,clien
 insert into filelist(shareid,server_filename,category,isdir,size,fs_id,path,md5,sign,time_stamp)values(d['shareid'],d['server_filename'],d['category'],d['isdir'],d['size'],d['fs_id'],d['path'],d['md5'],d['sign'],d['time_stamp'])
 insert into fans_list(uk,fans_uk,follow_time)values(d['uk'],d['fans_uk'],d['follow_time'])
 insert into follow_list(uk,follow_uname,follow_time)values(d['uk'],d['follow_uname'],d['follow_time'])
+
+delete from user_info;
+delete from share;
+delete from filelist;
+delete from fans_list;
+delete from follow_list;
+
+
+select 'user_info',count(1) from user_info union select 'share',count(1) from share union select 'filelist',count(1) from filelist union select 'fans_list',count(1) from fans_list union select 'follow_list',count(1) from follow_list;
+
+

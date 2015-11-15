@@ -13,6 +13,7 @@ Created on 2015年11月15日
 #6.读取1的订阅列表，分别执行2-5，直到遇到粉丝为0，订阅为0结束
 
 import urllib.request, json, mysql.connector
+import socket,urllib.parse
 
 def db_exec(action,sql,args):
     print("exec:"+sql)
@@ -58,8 +59,23 @@ def isExists(uk):
 def fetch_data(url,start):
     url=url+"&start="+str(start)
     print("fetching...:"+url);
-    d=urllib.request.urlopen(url).read()
+    
+    socket.setdefaulttimeout(60)
+    req = urllib.request.Request(url)
+    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1")
+    req.add_header("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+    req.add_header("Accept-Charset","utf-8")
+    
+    result = urllib.parse.urlparse(url)
+    params = urllib.parse.parse_qs(result.query,True)
+    
+    if result.path=="/pcloud/feed/getsharelist":    #如果是share则添加req.add_header("Referer",解决start超过500返回errorno=2
+        #print(params['query_uk'][0])
+        req.add_header("Referer","http://yun.baidu.com/share/home?uk="+params['query_uk'][0]+"&view=share")
+    
+    d=urllib.request.urlopen(req).read()
     d=str(d.decode('UTF-8'))
+    
     return json.loads(d) #反序列化
 
 #crawl_update_user
@@ -77,11 +93,17 @@ def crawl_update_user(uk):
 
 
 def crawl_save_share(uk):
-    #max_limit=100
-    url="http://yun.baidu.com/pcloud/feed/getsharelist?auth_type=1&limit=100&query_uk="+uk
-    d=fetch_data(url,0)
+    max_limit="100"
+    start=2000
+    
+    url="http://yun.baidu.com/pcloud/feed/getsharelist?auth_type=1&limit="+max_limit+"&query_uk="+uk
+    d=fetch_data(url,start)
+    
+    if d.get('errno',-1)!=0:
+        print("errno:"+str(d.get('errno',-1)))
+        return
+
     tc=d['total_count']
-    start=0
     
     sql="insert into share(uk,shareid,feed_type,category,public,data_id,title,third,clienttype,filecount,"
     sql+="username,feed_time,desc_,avatar_url,category_6_cnt,source_uid,source_id,shorturl,vCnt,dCnt,"
@@ -96,7 +118,7 @@ def crawl_save_share(uk):
     
     while tc>start:     #by page
         
-        ls=list(d['records'])
+        ls=d.get('records',list([]))
         
         for d in ls :
             category_6_cnt=d.get('category_6_cnt',-1)
@@ -112,7 +134,7 @@ def crawl_save_share(uk):
                 db_exec("insert",fsql,[d['shareid'],f['server_filename'],f['category'],f['isdir'],f['size'],f['fs_id'],f['path'],f['md5'],f['sign'],f['time_stamp']]) #insert new
         
         d=fetch_data(url,start)
-        start+=10   #++
+        start+=max_limit   #++
         
     print("Success.total_count=" + str(tc))
     
@@ -120,8 +142,8 @@ def crawl_save_share(uk):
     
 #crawl_save_follow
 def crawl_save_follow(uk):
-    #max_limit=25
-    url="http://yun.baidu.com/pcloud/friend/getfollowlist?limit=10&query_uk="+uk
+    max_limit=25
+    url="http://yun.baidu.com/pcloud/friend/getfollowlist?limit="+max_limit+"&query_uk="+uk
     d=fetch_data(url,0)
     tc=d['total_count']
     start=0
@@ -136,7 +158,7 @@ def crawl_save_follow(uk):
             db_exec("insert",sql,[uk,d['follow_uk'],d['follow_time']]) #insert new
         
         d=fetch_data(url,start)
-        start+=10   #++
+        start+=max_limit   #++
         
     print("crawl_save_follow end.total_count=" + str(tc))
     
@@ -144,8 +166,8 @@ def crawl_save_follow(uk):
     
 #crawl_save_fans
 def crawl_save_fans(uk):
-    #max_limit=25
-    url="http://yun.baidu.com/pcloud/friend/getfanslist?limit=10&query_uk="+uk
+    max_limit=25
+    url="http://yun.baidu.com/pcloud/friend/getfanslist?limit="+max_limit+"&query_uk="+uk
     d=fetch_data(url,0)
     tc=d['total_count']
     start=0
@@ -160,7 +182,7 @@ def crawl_save_fans(uk):
             db_exec("insert",sql,[uk,d['fans_uk'],d['follow_time']]) #insert new
         
         d=fetch_data(url,start)
-        start+=10   #++
+        start+=max_limit   #++
     print("crawl_save_follow end.total_count=" + str(tc))
     
 
@@ -190,12 +212,13 @@ def do_crawl(uk):
         crawl_save_share(uk)
         #crawl_save_follow(uk)
         #crawl_save_fans(uk)
-        loop_follow(uk)
+#         loop_follow(uk)
         #loop_fans(uk)
         
         
         
-do_crawl("891489109")
+#do_crawl("891489109")
+do_crawl("490155926")
 
 #    
 # sql="insert into share(uk,shareid,feed_type,category,public,data_id,title,third,clienttype,filecount,username,feed_time,desc_,avatar_url,category_6_cnt,source_uid,source_id,shorturl,vCnt,dCnt,tCnt,like_status,like_count,comment_count) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s);"

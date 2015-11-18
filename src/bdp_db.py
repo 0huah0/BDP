@@ -61,7 +61,9 @@ def db_exec(action,sql,args):
             cur.execute(sql, args)
             conn.commit()
         elif "count"==action: #COUNT
-            results=cur.execute(sql % (args))
+            cur.execute(sql % (args))
+            results=cur.fetchone()[0]
+            #print(results)
             if results==None:
                 results=0;
         else:   # LIST

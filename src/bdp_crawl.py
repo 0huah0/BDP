@@ -186,8 +186,8 @@ def do_crawl(uk):
         
         
         
-do_crawl("891489109")
-#do_crawl("490155926")
+#do_crawl("891489109")
+do_crawl("490155926")
 
 #    
 # sql="insert into share(uk,shareid,feed_type,category,public,data_id,title,third,clienttype,filecount,username,feed_time,desc_,avatar_url,category_6_cnt,source_uid,source_id,shorturl,vCnt,dCnt,tCnt,like_status,like_count,comment_count) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s);"

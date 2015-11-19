@@ -63,7 +63,7 @@ def crawl_update_user(uk):
     if d!=None:
         try:
             d=[d['avatar_url'],d['fans_count'],d['follow_count'],d['album_count'],d['intro'],d['uname'],d['uk'],d['pubshare_count'],d['tui_user_count'],d['c2c_user_sell_count'],d['c2c_user_buy_count'],d['c2c_user_product_count'],d['pair_follow_type']]
-            bdp_db.db_exec("insert",bdp_db.sql_user,d) #insert new
+            bdp_db.db_exec("insert",bdp_db.insert_user,d) #insert new
         except Exception as e:
             logging.warn("skip insert.err:"+str(e))
 
@@ -86,7 +86,7 @@ def crawl_save_share(uk):
             if category_6_cnt==-1:category_6_cnt=d.get('category_4_cnt',-1)
             
             try:
-                bdp_db.db_exec("insert",bdp_db.sql_share,[d['uk'],d['shareid'],d['feed_type'],d['category'],d['public'],d['data_id'],d['title'],d['third'],d['clienttype'],d['filecount'],d['username'],d['feed_time'],d['desc'],d['avatar_url'],category_6_cnt,d['source_uid'],d['source_id'],d['shorturl'],d['vCnt'],d['dCnt'],d['tCnt'],d['like_status'],d['like_count'],d['comment_count']]) #insert new
+                bdp_db.db_exec("insert",bdp_db.insert_share,[d['uk'],d['shareid'],d['feed_type'],d['category'],d['public'],d['data_id'],d['title'],d['third'],d['clienttype'],d['filecount'],d['username'],d['feed_time'],d['desc'],d['avatar_url'],category_6_cnt,d['source_uid'],d['source_id'],d['shorturl'],d['vCnt'],d['dCnt'],d['tCnt'],d['like_status'],d['like_count'],d['comment_count']]) #insert new
             except Exception as e:
                 logging.warn("skip insert.err:"+str(e))
             
@@ -95,7 +95,7 @@ def crawl_save_share(uk):
             
             for f in filelist :
                 try:
-                    bdp_db.db_exec("insert",bdp_db.sql_file,[d['shareid'],f['server_filename'],f['category'],f['isdir'],f['size'],f['fs_id'],f['path'],f['md5'],f['sign'],f['time_stamp']]) #insert new
+                    bdp_db.db_exec("insert",bdp_db.insert_file,[d['shareid'],f['server_filename'],f['category'],f['isdir'],f['size'],f['fs_id'],f['path'],f['md5'],f['sign'],f['time_stamp']]) #insert new
                 except Exception as e:
                     logging.warn("skip insert.err:"+str(e))
                     
@@ -121,7 +121,7 @@ def crawl_save_follow(uk):
         
         for d in ls :
             try:
-                bdp_db.db_exec("insert",bdp_db.sql_follow,[uk,d['follow_uk'],d['follow_time']]) #insert new
+                bdp_db.db_exec("insert",bdp_db.insert_follow,[uk,d['follow_uk'],d['follow_time']]) #insert new
             except Exception as e:
                 logging.warn("skip insert.err:"+str(e))
         
@@ -145,7 +145,7 @@ def crawl_save_fans(uk):
         ls=d.get('fans_list',[])
         for d in ls :
             try:
-                bdp_db.db_exec("insert",bdp_db.sql_fans,[uk,d['fans_uk'],d['follow_time']]) #insert new
+                bdp_db.db_exec("insert",bdp_db.insert_fans,[uk,d['fans_uk'],d['follow_time']]) #insert new
             except Exception as e:
                 logging.warn("skip insert.err:"+str(e))
         

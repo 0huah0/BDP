@@ -25,25 +25,25 @@ console.setFormatter(logging.Formatter('%(name)-2s: %(levelname)-8s %(message)s'
 logging.getLogger('bdp').addHandler(console)
 
 
-sql_share="insert into share(uk,shareid,feed_type,category,public,data_id,title,third,clienttype,filecount,username,feed_time,desc_,avatar_url,category_6_cnt,source_uid,source_id,shorturl,vCnt,dCnt,\
+insert_share="insert into share(uk,shareid,feed_type,category,public,data_id,title,third,clienttype,filecount,username,feed_time,desc_,avatar_url,category_6_cnt,source_uid,source_id,shorturl,vCnt,dCnt,\
     tCnt,like_status,like_count,comment_count) values \
     (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,\
      %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,\
      %s,%s,%s,%s);"
     
     
-sql_file="insert into filelist(shareid,server_filename,category,isdir,size,fs_id,path,md5,sign,time_stamp) values \
+insert_file="insert into filelist(shareid,server_filename,category,isdir,size,fs_id,path,md5,sign,time_stamp) values \
     (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
 
 
-sql_user="insert into user_info(avatar_url,fans_count,follow_count,album_count,intro,uname,\
+insert_user="insert into user_info(avatar_url,fans_count,follow_count,album_count,intro,uname,\
     uk,pubshare_count,tui_user_count,c2c_user_sell_count,c2c_user_buy_count,c2c_user_product_count,pair_follow_type) values \
     (%s,%s,%s,%s,%s,%s ,%s,%s,%s,%s,%s,%s,%s);"
     
     
-sql_follow="insert into follow_list(uk,follow_uk,follow_time) values (%s,%s,%s);"
+insert_follow="insert into follow_list(uk,follow_uk,follow_time) values (%s,%s,%s);"
 
-sql_fans="insert into fans_list(uk,fans_uk,follow_time) values (%s,%s,%s);"    
+insert_fans="insert into fans_list(uk,fans_uk,follow_time) values (%s,%s,%s);"    
 
 def db_exec(action,sql,args):
     logging.debug("exec:"+sql)

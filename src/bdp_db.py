@@ -9,12 +9,12 @@ import mysql.connector
 import logging
 import datetime
 
-cur_date=datetime.datetime.now().strftime('%Y%m%d%H%M%S');
+cur_date=datetime.datetime.now().strftime('%Y%m%d%H%M');
 #print('bdp_crawl_'+cur_date+'.log')
 
 logging.basicConfig(level=logging.DEBUG,
-                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
+                format='%(asctime)s %(name) %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                datefmt='%Y%m%d-%H:%M:%S',
                 filename='bdp_crawl_'+cur_date+'.log',
                 filemode='w')
 
@@ -22,8 +22,9 @@ logging.basicConfig(level=logging.DEBUG,
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
 console.setFormatter(logging.Formatter('%(name)-2s: %(levelname)-8s %(message)s'))
-logging.getLogger('bdp').addHandler(console)
+logging.getLogger('').addHandler(console)
 
+logger = logging.getLogger('bdp') 
 
 insert_share="insert into share(uk,shareid,feed_type,category,public,data_id,title,third,clienttype,filecount,username,feed_time,desc_,avatar_url,category_6_cnt,source_uid,source_id,shorturl,vCnt,dCnt,\
     tCnt,like_status,like_count,comment_count) values \
@@ -48,7 +49,7 @@ insert_fans="insert into fans_list(uk,fans_uk,follow_time) values (%s,%s,%s);"
 def db_exec(action,sql,args):
     logging.debug("exec:"+sql)
     
-    logging.debug(str(args).encode('utf-8',"ignore"))
+    logger.debug(str(args).encode('utf-8',"ignore"))
     
     results=0
     
@@ -56,8 +57,7 @@ def db_exec(action,sql,args):
         conn = mysql.connector.connect(host='localhost', user='root', passwd='root', db='bdp', port=3306)
         cur = conn.cursor()
         
-        if "insert"==action:  # INSERT
-            # cur.execute('insert into test values(%s,%s)',value)
+        if "insert"==action or "delete"==action:  # INSERT
             cur.execute(sql, args)
             conn.commit()
         elif "count"==action: #COUNT
@@ -73,10 +73,9 @@ def db_exec(action,sql,args):
         cur.close()
         conn.close()
     except mysql.connector.Error as err:
-        logging.warning("Failed.exec:")
-        logging.warning(err)
+        logger.warning("Failed.exec:"+str(err))
     else:
-        logging.debug("Success.exec:"+sql)
+        logger.debug("Success.exec:"+sql)
         cur.close()
         
         

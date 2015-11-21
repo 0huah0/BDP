@@ -1,3 +1,8 @@
+CREATE DATABASE `bdp`  
+CHARACTER SET 'utf8'  
+COLLATE 'utf8_general_ci'; 
+
+
 create table share(
 	uk varchar(100),
 	shareid varchar(100),
@@ -24,21 +29,21 @@ create table share(
 	like_count int,
 	comment_count int,
 	create_dt timestamp default now()
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table filelist(
 	shareid varchar(100),	#!!
 	server_filename varchar(1000),
 	category int,
 	isdir int,
-	size int(10),
+	size int(15),
 	fs_id varchar(100),
 	path varchar(1000),
 	md5 varchar(100),
 	sign varchar(100),
 	time_stamp varchar(100),
 	create_dt timestamp default now()
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8; 
 
 create table user_info(
 	avatar_url varchar(1000),
@@ -55,7 +60,7 @@ create table user_info(
 	c2c_user_product_count int,
 	pair_follow_type int,
 	create_dt timestamp default now()
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8; 
 
 
 create table fans_list(
@@ -63,7 +68,7 @@ create table fans_list(
 	fans_uk varchar(100),
 	follow_time varchar(100),
 	create_dt timestamp default now()
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8; 
 
 
 
@@ -72,4 +77,9 @@ create table follow_list(
 	follow_uk varchar(100),
 	follow_time varchar(100),
 	create_dt timestamp default now()
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+create table bdp_new_uk(
+	uk varchar(100)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+

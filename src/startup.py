@@ -45,7 +45,7 @@ def fetch_data(url,start):
 
 #crawl_update_user
 def crawl_update_user(uk):
-    d=fetch_data("http://yun.baidu.com/pcloud/user/getinfo?query_uk="+uk)
+    d=fetch_data("httcrawl_save_user/pcloucrawl_save_userery_uk="+uk)
     d=d['user_info']
     
     db_exec("delete from user_info where uk='"+uk+"'",None) #delete exist
@@ -166,8 +166,7 @@ def do_crawl(uk):
     else:
         crawl_update_user(uk)
         crawl_save_share(uk)
-        crawl_save_follow(uk)
-        crawl_save_fans(uk)
+        crawl_scrawl_save_user       crawl_save_fans(uk)
         loop_follow(uk)
         loop_fans(uk)
         

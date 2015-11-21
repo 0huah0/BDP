@@ -202,13 +202,16 @@ def do_crawl():
                 else:
                     crawl_save_share(uk)
                     crawl_save_user(uk)
-                    bdp_db.db_exec("delete","delete from bdp_new_uk where uk="+str(uk),uk) ;
+                    
+                #delete whether success or not
+                bdp_db.db_exec("delete","delete from bdp_new_uk where uk="+str(uk),uk) ;
         else:
             global miss_times
             miss_times+=1
             if(miss_times>10):
                 break
             sleep(2)
+            logger.warn("bdp_new_uk empty,waiting 2s...>>"+str(miss_times))
         
      
      

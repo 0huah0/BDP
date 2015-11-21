@@ -12,10 +12,10 @@ import datetime
 cur_date=datetime.datetime.now().strftime('%Y%m%d%H%M');
 #print('bdp_crawl_'+cur_date+'.log')
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(name) %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%Y%m%d-%H:%M:%S',
-                filename='bdp_crawl_'+cur_date+'.log',
+                filename='../log/bdp_crawl_'+cur_date+'.log',
                 filemode='w')
 
 #定义一个StreamHandler，将INFO级别或更高的日志信息打印到标准错误，并将其添加到当前的日志处理对象#

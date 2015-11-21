@@ -166,7 +166,7 @@ def do_crawl(uk):
     else:
         crawl_update_user(uk)
         crawl_save_share(uk)
-        crawl_scrawl_save_user       crawl_save_fans(uk)
+        crawl_save_fans(uk)
         loop_follow(uk)
         loop_fans(uk)
         
